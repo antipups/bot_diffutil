@@ -18,8 +18,12 @@ class Users(BaseModel):
     """
         Users which use bot
     """
-    tg_id = IntegerField(unique=True,
-                         help_text='ID in telegram')
+    class Meta:
+        primary_key = False
+
+    id = IntegerField(primary_key=True,
+                      help_text='ID in telegram')
+    name = CharField(max_length=64)
 
 
 class Keys(BaseModel):
@@ -30,8 +34,8 @@ class Keys(BaseModel):
         primary_key = False
 
     user = ForeignKeyField(Users,
-                           on_delete=Constants.ForeignTypeOfChange.CASCADE,
-                           on_update=Constants.ForeignTypeOfChange.CASCADE,
+                           on_delete='CASCADE',
+                           on_update='CASCADE',
                            primary_key=True)
     key = BlobField(help_text='Public key for user')
 
@@ -58,8 +62,8 @@ class Sessions(BaseModel):
         primary_key = False
 
     user = ForeignKeyField(Users,
-                           on_delete=Constants.ForeignTypeOfChange.CASCADE,
-                           on_update=Constants.ForeignTypeOfChange.CASCADE,
+                           on_delete='CASCADE',
+                           on_update='CASCADE',
                            primary_key=True)
 
     session = JSONField(help_text='Session user data')
@@ -71,12 +75,37 @@ class Passwords(BaseModel):
     """
 
     user = ForeignKeyField(Users,
-                           on_delete=Constants.ForeignTypeOfChange.CASCADE,
-                           on_update=Constants.ForeignTypeOfChange.CASCADE,
+                           on_delete='CASCADE',
+                           on_update='CASCADE',
                            primary_key=True)
 
     title = BlobField(help_text='encrypted password title')
     encrypted_password = BlobField(help_text='encrypted user password')
+
+
+class Languages(BaseModel):
+    """
+        Languages in project
+    """
+    code_in_tg = CharField(max_length=2,
+                           unique=True,
+                           help_text='language code in tg')
+    title = CharField(max_length=16,
+                      unique=True,
+                      help_text='language title')
+
+
+class BotMessages(BaseModel):
+    """
+        Model for other text messages for bot on other languages
+    """
+
+    title = CharField(max_length=128,
+                      help_text='message title for get message from bot')
+    lang = ForeignKeyField(Languages,
+                           on_delete='CASCADE',
+                           on_update='CASCADE',)
+    text = CharField(max_length=1024,)
 
 
 def create_tables():
@@ -84,3 +113,9 @@ def create_tables():
     Keys.create_table()
     Sessions.create_table()
     Passwords.create_table()
+    Languages.create_table()
+    BotMessages.create_table()
+
+
+def test():
+    ...
