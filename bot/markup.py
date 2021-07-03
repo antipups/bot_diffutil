@@ -4,24 +4,25 @@ from bot import util
 from bot.config import Keyboards
 
 
-def main_menu(chat_id: int) -> ReplyKeyboardMarkup:
-
+def _reply_menu(keyboard) -> ReplyKeyboardMarkup:
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
 
-    for row in util.keyboard_on_user_language(chat_id=chat_id,
-                                              keyboard=Keyboards.Menu.START):
+    for row in keyboard:
         button_row = [KeyboardButton(text=button_title) for button_title in row]
         markup.add(*button_row)
 
     return markup
+
+
+def main_menu(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Menu.START))
 
 
 def languages() -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.languages_for_markup(langs=db_util.get_languages()))
 
-    markup = ReplyKeyboardMarkup(resize_keyboard=True)
 
-    for row in util.languages_for_markup(langs=db_util.get_languages()):
-        button_row = [KeyboardButton(text=button_title) for button_title in row]
-        markup.add(*button_row)
-
-    return markup
+def settings_menu(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Menu.SETTINGS))

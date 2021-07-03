@@ -26,8 +26,17 @@ class BotButtonTitles:
     """
         Button codes
     """
+    BACK = 'back'
 
-    PASSWORD_GENERATOR = 'password_generator'
+    class MainMenu:
+        PASSWORD_GENERATOR = 'password_generator'
+        MAIN_SETTINGS = 'main_settings'
+
+    class Passwords:
+        CREATE_PASSWORD = 'create_password'
+
+    class Settings:
+        LANGUAGE = 'language'
 
 
 class BotMessageTitles:
@@ -39,6 +48,7 @@ class BotMessageTitles:
     CHOISE_FROM_KEY = 'choise_from_key'
     SET_LANG = 'success_set_lang'
     MAIN_MENU = 'main_menu'
+    SETTINGS = 'settings'
 
 
 class Keyboards:
@@ -51,7 +61,9 @@ class Keyboards:
             Bot menus
         """
 
-        START = [[BotButtonTitles.PASSWORD_GENERATOR,]]
+        START = [[BotButtonTitles.MainMenu.PASSWORD_GENERATOR, BotButtonTitles.MainMenu.MAIN_SETTINGS]]
+        SETTINGS = [[BotButtonTitles.Settings.LANGUAGE],
+                    [BotButtonTitles.BACK]]
 
 
 class Logs:

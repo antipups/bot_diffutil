@@ -70,19 +70,35 @@ def get_text(chat_id: int, title_message: str, lang: str = '') -> str:
     if not lang:
         lang = Sessions.get(user=Users.get(id=chat_id)).session.get(UserSessionKeys.LANG)
 
-    return BotMessages.get(Languages.get(code_in_tg=lang),
+    return BotMessages.get(lang=Languages.get(code_in_tg=lang),
                            title=title_message).text
 
 
-def get_user_data(chat_id: int) -> dict:
+def get_text_code(chat_id: int, text: str) -> str:
+    """
+        Get code of text
+    :param chat_id:
+    :param text: text in botmessages
+    :return: text title
+    """
+
+    lang = Sessions.get(user=Users.get(id=chat_id)).session.get(UserSessionKeys.LANG)
+    if code := BotMessages.get_or_none(BotMessages.lang == Languages.get(code_in_tg=lang),
+                                       BotMessages.text == text):
+        return code.title
+
+    else:
+        return ''
+
+
+def get_user_data(chat_id: int, code: str) -> str:
     """
         Get user data from db
+    :param code:
     :param chat_id:
-    :return: dict of data
+    :return: value of session code
     """
     if session := Sessions.get_or_none(user=chat_id).session:
-        return session
-    else:
-        return set_user_data(chat_id=chat_id)
+        return session.session.get(code)
 
 

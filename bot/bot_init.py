@@ -1,13 +1,14 @@
 from telebot import TeleBot
 from telebot.types import BotCommand, Message, CallbackQuery
-from bot.config import Constants, Logs, BotMessageTitles
+from bot.config import Constants, Logs, BotMessageTitles, BotButtonTitles
 from typing import Union
 from database import util as db_util
 from database.config import UserSessionKeys
 from logs import logger
 
 
-bot = TeleBot(token=Constants.TOKEN)
+bot = TeleBot(token=Constants.TOKEN,
+              parse_mode='html')
 
 
 bot.set_my_commands([BotCommand(command_title, command_description) for command_title, command_description in Constants.COMMANDS.items()])
@@ -65,6 +66,23 @@ def delete_message(chat_id: int,
                            message_id=message_id)
     except Exception as e:
         logger.error(Logs.Error.CANT_DELETE_MESSAGE.format(e))
+
+
+def query_hangler(message, button_title: str) -> bool:
+    """
+        For decorators and decrease amount code
+    :param button_title: button code
+    :param message: message object
+    :return:
+    """
+    if isinstance(message, Message):
+        text = message.text
+    else:
+        text = message.data
+
+    user_button = db_util.get_text(chat_id=message.from_user.id,
+                                   title_message=button_title)
+    return True if text == user_button else False
 
 
 def start_bot():

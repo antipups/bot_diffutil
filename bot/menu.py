@@ -5,9 +5,27 @@ from bot import markup
 from database.validators import Validator
 
 
+def register_lang_markup(chat_id: int, lang_code: str = '', redirect: bool = False):
+    """
+        DRY for wait lang markup
+    :param lang_code: if first time setup
+    :param redirect: if user choise not correct button
+    :param chat_id:
+    :return:
+    """
+
+    schedule_message(chat_id=chat_id,
+                     title_message=BotMessageTitles.GET_LANG,
+                     lang=lang_code,
+                     method=setup_language,
+                     reply_markup=markup.languages())
+
+
 @bot.message_handler(commands=Constants.Commands.START)
 def start_menu(message: Message = None, chat_id: int = None):
-    chat_id, text, message_id = get_info_from_message(message=message)
+    if message:
+        chat_id, text, message_id = get_info_from_message(message=message)
+
     if Validator.check_user(chat_id=chat_id):
 
         bot.send_message(chat_id=chat_id,
@@ -18,11 +36,8 @@ def start_menu(message: Message = None, chat_id: int = None):
     else:
         db_util.add_user(chat_id=chat_id,
                          name=message.from_user.first_name)
-        schedule_message(chat_id=chat_id,
-                         title_message=BotMessageTitles.GET_LANG,
-                         lang=message.from_user.language_code,
-                         method=setup_language,
-                         reply_markup=markup.languages())
+        register_lang_markup(chat_id=chat_id,
+                             lang_code=message.from_user.language_code)
 
 
 def setup_language(message: Message):
