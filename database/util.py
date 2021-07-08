@@ -50,6 +50,7 @@ def set_user_data(chat_id: int, key: str, value: str) -> dict:
     if session := Sessions.get_or_none(user=Users.get(id=chat_id)):
         session.session.update({key: value})
         session.save()
+
     else:
         session = Sessions(user=Users.get(tg_id=chat_id),
                            session={key: value})

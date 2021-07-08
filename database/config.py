@@ -4,6 +4,9 @@ class Constants:
                            'database': 'bot_different_utilities',
                            'charset': 'utf8mb4'}
 
+    MAX_PASS_LEN = 501
+    MIN_PASS_LEN = 8
+
 
 class Logs:
     class Info:
@@ -12,3 +15,6 @@ class Logs:
 
 class UserSessionKeys:
     LANG = 'lang'
+    PASS_LEN = 'pass_len'
+    PASS_CYR = 'pass_cyr'
+    PASS_SPEC = 'pass_spec'

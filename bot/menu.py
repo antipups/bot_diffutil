@@ -1,8 +1,6 @@
-from telebot.types import Message
 from bot.bot_init import *
 from bot import util
 from bot import markup
-from database.validators import Validator
 
 
 def register_lang_markup(chat_id: int, lang_code: str = '', redirect: bool = False):
@@ -15,13 +13,15 @@ def register_lang_markup(chat_id: int, lang_code: str = '', redirect: bool = Fal
     """
 
     schedule_message(chat_id=chat_id,
-                     title_message=BotMessageTitles.GET_LANG,
+                     title_message=BotMessageTitles.GET_LANG if not redirect else BotMessageTitles.CHOISE_FROM_KEY,
                      lang=lang_code,
                      method=setup_language,
                      reply_markup=markup.languages())
 
 
-@bot.message_handler(commands=Constants.Commands.START)
+@bot.message_handler(func=lambda message: message.text == Constants.Commands.START or
+                                          query_hangler(message=message,
+                                                        button_title=BotButtonTitles.TO_MAIN_MENU))
 def start_menu(message: Message = None, chat_id: int = None):
     if message:
         chat_id, text, message_id = get_info_from_message(message=message)
@@ -56,14 +56,8 @@ def setup_language(message: Message):
                          text=db_util.get_text(chat_id=chat_id,
                                                title_message=BotMessageTitles.SET_LANG))
 
-        bot.send_message(chat_id=chat_id,
-                         text=db_util.get_text(chat_id=chat_id,
-                                               title_message=BotMessageTitles.MAIN_MENU),
-                         reply_markup=markup.main_menu(chat_id=chat_id))
+        start_menu(chat_id=chat_id)
 
     else:
-        schedule_message(chat_id=chat_id,
-                         title_message=BotMessageTitles.CHOISE_FROM_KEY,
-                         lang=message.from_user.language_code,
-                         method=setup_language,
-                         reply_markup=markup.languages())
+        register_lang_markup(chat_id=chat_id,
+                             redirect=True)

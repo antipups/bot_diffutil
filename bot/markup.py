@@ -26,3 +26,27 @@ def languages() -> ReplyKeyboardMarkup:
 def settings_menu(chat_id: int) -> ReplyKeyboardMarkup:
     return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
                                                                keyboard=Keyboards.Menu.SETTINGS))
+
+
+def passwords_menu(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Menu.PASSWORDS))
+
+
+def available_pass_lens() -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=Keyboards.Passwords.LENS)
+
+
+def cyrillic(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Passwords.CYR))
+
+
+def spec_symbols(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Passwords.SPEC))
+
+
+def wanna_save(chat_id: int) -> ReplyKeyboardMarkup:
+    return _reply_menu(keyboard=util.keyboard_on_user_language(chat_id=chat_id,
+                                                               keyboard=Keyboards.Passwords.SAVE))
