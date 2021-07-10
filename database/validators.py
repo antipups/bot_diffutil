@@ -34,8 +34,14 @@ class Validator:
             return -1
 
     @staticmethod
-    def check_yes_or_no(chat_id: int, answer: str):
+    def check_yes_or_no(chat_id: int, answer: str) -> str:
+        """
+            Check valid answer, and return title of answer
+        :param chat_id:
+        :param answer:
+        :return:
+        """
         lang = Sessions.get(user=chat_id).session.get(UserSessionKeys.LANG)
         return BotMessages.get_or_none(lang=Languages.get(Languages.code_in_tg == lang),
-                                       text=answer)
+                                       text=answer).title
 

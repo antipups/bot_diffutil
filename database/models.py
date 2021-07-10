@@ -76,10 +76,9 @@ class Passwords(BaseModel):
 
     user = ForeignKeyField(Users,
                            on_delete='CASCADE',
-                           on_update='CASCADE',
-                           primary_key=True)
+                           on_update='CASCADE')
 
-    title = BlobField(help_text='encrypted password title')
+    title = CharField(help_text='password title')
     encrypted_password = BlobField(help_text='encrypted user password')
 
 

@@ -27,8 +27,13 @@ def get_info_from_message(message: Union[Message, CallbackQuery]) -> tuple[int, 
     :param message: message or callback object
     :return: user chat id, message text, message id
     """
-    logger.info(Logs.Info.USER_WRITE.format(message.from_user.id,
-                message.caption if message.content_type != 'text' else message.text))
+    if isinstance(message, CallbackQuery):
+        logger.info(Logs.Info.USER_WRITE.format(message.from_user.id,
+                                                message.data))
+    else:
+        if 'END RSA' not in message.text:
+            logger.info(Logs.Info.USER_WRITE.format(message.from_user.id,
+                    message.caption if message.content_type != 'text' else message.text))
 
     if isinstance(message, Message):
         if message.content_type != 'text':
@@ -39,13 +44,13 @@ def get_info_from_message(message: Union[Message, CallbackQuery]) -> tuple[int, 
         return message.from_user.id, message.data, message.message.message_id
 
 
-def send_message(chat_id: int, title_message: str, lang: str = '', reply_markup=None, format_args: Union[str, list, tuple] = []):
+def send_message(chat_id: int, title_message: str, lang: str = '', reply_markup=None, format_args: Union[str, list, tuple] = [], delay: int = 0):
     """
         For DRY and faster acces to bot.send_message
-    :param format_args:
+    :param delay: for send message in new thread and able to delay send
+    :param format_args: agrs for format message from db
     :param chat_id:
     :param title_message:
-    :param method:
     :param lang:
     :param reply_markup:
     :return:
@@ -53,17 +58,27 @@ def send_message(chat_id: int, title_message: str, lang: str = '', reply_markup=
     if isinstance(format_args, str):
         format_args = [format_args]
 
-    logger.debug(format_args)
-    return bot.send_message(chat_id=chat_id,
-                            text=db_util.get_text(chat_id=chat_id,
-                                                  title_message=title_message,
-                                                  lang=lang)
+    message = {'chat_id': chat_id,
+               'text': db_util.get_text(chat_id=chat_id,
+                                        title_message=title_message,
+                                        lang=lang)
                                         .format(*format_args)
                                         .replace('\\t', '\t')
                                         .replace('\\n', '\n'),
-                            reply_markup=reply_markup,
-                            parse_mode='html'
-                            )
+               'reply_markup': reply_markup,
+               'parse_mode': 'html'}
+
+    if delay:
+        Thread(target=delay_send_message,
+               kwargs={'message': message,
+                       'delay': delay}).start()
+    else:
+        return bot.send_message(**message)
+
+
+def delay_send_message(message: dict, delay: int = Constants.SECONDS_TO_SEND_MESSAGE_IN_THE_THREAD):
+    sleep(delay)
+    bot.send_message(**message)
 
 
 def schedule_message(chat_id: int, title_message: str, method, lang:str = '', reply_markup=None):

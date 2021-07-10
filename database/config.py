@@ -18,3 +18,4 @@ class UserSessionKeys:
     PASS_LEN = 'pass_len'
     PASS_CYR = 'pass_cyr'
     PASS_SPEC = 'pass_spec'
+    PASSWORD_TITLE = 'password_title'

@@ -34,6 +34,8 @@ class Constants:
     AMOUNT_LANGS_IN_ROW = 3
 
     SECONDS_TO_DELETE_MSG = 10
+    SECONDS_TO_DELETE_MSG_WITH_KEY = 30
+    SECONDS_TO_SEND_MESSAGE_IN_THE_THREAD = 1
 
 
 class BotButtonTitles:
@@ -88,11 +90,22 @@ class BotMessageTitles:
     WANNA_SAVE = 'wanna_save'
     PASSWORD_WAS_CREATED = 'password_was_created'
 
+    PASSWORD_TITLE = 'password_title'
+    GENERATE_KEY = 'generate_key'
+
+    GET_PASS_TITLES = 'get_pass_titles'
+    INPUT_PRIV_KEY = 'input_priv_key'
+    ERROR_IN_GETTING_PASS = 'error_in_getting_pass'
+    PRINT_PASSWORD = 'print_password'
+    NOT_VALID_KEY = 'not_valid_key'
+    SECURITY_KEY_GEN = 'security_key_gen'
+
 
 class Keyboards:
     """
         Keyboards, structure list - rows, list in list - buttons in rows
     """
+    BACK = [[BotButtonTitles.BACK]]
 
     class Passwords:
         LENS = [[16, 32, 64],
@@ -116,6 +129,11 @@ class Keyboards:
                      [BotButtonTitles.TO_MAIN_MENU]]
 
 
+class BotCallbackData:
+
+    CHOSE_PASS = 'chose_pass_{}'
+
+
 class Logs:
     """
         Logs =)
@@ -127,6 +145,7 @@ class Logs:
     class Error:
         CANT_SAND_WITH_REGISTER = 'Can\'t send message with registration step because - *{}*'
         CANT_DELETE_MESSAGE = 'Can\'t delete message because - *{}*'
+        GET_PASSWORD = 'Error in getting password. From user - {}'
 
     class Info:
         USER_WRITE = 'User "{}" write "{}"'

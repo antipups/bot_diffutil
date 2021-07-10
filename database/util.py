@@ -1,6 +1,10 @@
+from typing import Optional, Union
+
+import passwords.generate_password
 from database.models import *
 from database.config import Logs, UserSessionKeys
 from logs import logger
+from passwords import rsa_manipulations
 
 
 def get_languages() -> tuple:
@@ -103,3 +107,51 @@ def get_user_data(chat_id: int, code: str) -> str:
         return session.session.get(code)
 
 
+def get_pub_key(chat_id: int) -> Union[bytes, None]:
+    """
+        Get user pub key if exists, else, false
+    :param chat_id:
+    :return: if pub key exist, return pub key
+    """
+    if key := Keys.get_or_none(Users.get(chat_id)):
+        return key.key
+    else:
+        return None
+
+
+def create_keys(chat_id: int) -> bytes:
+    """
+        create pub and priv key and write pub in db, return priv
+    :param chat_id:
+    :return:
+    """
+    pub_key, priv_key = rsa_manipulations.create_keys()
+
+    Keys(user=Users.get(chat_id),
+         key=pub_key).save(force_insert=True)
+
+    return priv_key
+
+
+def save_password(chat_id: int, password_title: str, password: str):
+    encrypted_pass = rsa_manipulations.crypt_password(pub_key=get_pub_key(chat_id=chat_id),
+                                                      password=password)
+    Passwords(user=Users.get(chat_id),
+              title=password_title,
+              encrypted_password=encrypted_pass).save(force_insert=True)
+
+
+def get_password_titles(chat_id: int) -> tuple:
+    return tuple(Passwords.select(Passwords.title).where(Users.get(chat_id)).tuples())
+
+
+def get_password(chat_id: int, private_key: str) -> tuple[bool, str]:
+    password = Passwords.get(user=chat_id,
+                             title=Sessions.get(user=chat_id).session['password_title'],).encrypted_password
+    try:
+        password_in_str: str = rsa_manipulations.decrypt_password(private_key=private_key.encode(),
+                                                                  password=password)
+    except:
+        return False, 'not_valid_key'
+    else:
+        return True, password_in_str

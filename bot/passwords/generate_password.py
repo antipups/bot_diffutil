@@ -85,8 +85,9 @@ def get_symbols_type(message: Message):
     code = Validator.check_yes_or_no(chat_id=chat_id, answer=text)
 
     if code:
-        user_data[chat_id].update({UserSessionKeys.PASS_CYR: code.title})
+        user_data[chat_id].update({UserSessionKeys.PASS_CYR: code})
         register_get_spec_symbols(chat_id=chat_id)
+
     else:
         register_get_symbols_type(chat_id=chat_id,
                                   redirect=True)
@@ -101,7 +102,7 @@ def get_spec_symbols(message: Message):
     code = Validator.check_yes_or_no(chat_id=chat_id, answer=text)
 
     if code:
-        user_data[chat_id].update({UserSessionKeys.PASS_SPEC: code.title})
+        user_data[chat_id].update({UserSessionKeys.PASS_SPEC: code})
         # logger.debug(f'All data - {user_data}')
         register_save(chat_id=chat_id)
 
@@ -110,10 +111,11 @@ def get_spec_symbols(message: Message):
                                   redirect=True)
 
 
-def generate_pass_and_send_it(chat_id: int):
+def generate_pass_and_send_it(chat_id: int, password_title: str = ''):
     """
-        Generate pass and sent it at once, after, delete
+        Generate pass and sent it at once, after, delete, if password_title - save password with need title
     :param chat_id:
+    :param password_title:
     :return:
     """
 
@@ -128,15 +130,25 @@ def generate_pass_and_send_it(chat_id: int):
                  message_id=msg.message_id,
                  delay=Constants.SECONDS_TO_DELETE_MSG)
 
+    send_message(chat_id=chat_id,
+                 title_message=BotMessageTitles.MAIN_MENU,
+                 reply_markup=markup.main_menu(chat_id=chat_id),
+                 delay=Constants.SECONDS_TO_DELETE_MSG - 1)
+
+    if password_title:
+        db_util.save_password(chat_id=chat_id,
+                              password_title=password_title,
+                              password=password)
+
 
 def create_password_with_params(message: Message):
     chat_id, text, message_id = get_info_from_message(message=message)
 
-    if Validator.check_yes_or_no(chat_id=chat_id,
-                                 answer=text):
+    if text_title := Validator.check_yes_or_no(chat_id=chat_id,
+                                               answer=text):
 
-        if text == BotButtonTitles.Passwords.GeneratePassword.SAVE:
-            ...
+        if text_title == BotButtonTitles.Passwords.GeneratePassword.SAVE:
+            check_key(chat_id=chat_id)
 
         else:
             generate_pass_and_send_it(chat_id=chat_id)
@@ -144,3 +156,40 @@ def create_password_with_params(message: Message):
     else:
         register_save(chat_id=chat_id,
                       redirect=True)
+
+
+def check_key(chat_id: int):
+    key = db_util.get_pub_key(chat_id=chat_id)
+
+    if not key:
+        send_message(chat_id=chat_id,
+                     title_message=BotMessageTitles.SECURITY_KEY_GEN,
+                     reply_markup=markup.clear_markup(),
+                     delay=Constants.SECONDS_TO_SEND_MESSAGE_IN_THE_THREAD)
+
+        private_key = db_util.create_keys(chat_id=chat_id)
+
+        msg = send_message(chat_id=chat_id,
+                           title_message=BotMessageTitles.GENERATE_KEY,
+                           format_args=private_key.decode('utf-8'))
+
+        delay_delete(chat_id=chat_id,
+                     message_id=msg.message_id,
+                     delay=Constants.SECONDS_TO_DELETE_MSG_WITH_KEY)
+
+    schedule_message(chat_id=chat_id,
+                     title_message=BotMessageTitles.PASSWORD_TITLE,
+                     method=save_password,
+                     reply_markup=markup.back(chat_id=chat_id))
+
+
+def save_password(message: Message):
+    chat_id, text, message_id = get_info_from_message(message=message)
+
+    if BotButtonTitles.BACK == db_util.get_text_code(chat_id=chat_id,
+                                                     text=text):
+        register_save(chat_id=chat_id)
+
+    else:
+        generate_pass_and_send_it(chat_id=chat_id,
+                                  password_title=text)

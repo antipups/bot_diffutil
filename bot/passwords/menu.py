@@ -1,6 +1,7 @@
 from bot.bot_init import *
 from bot import util
 from bot.passwords.generate_password import register_password_length
+from bot.passwords import check_passwords
 
 
 @bot.message_handler(func=lambda message: message.text == Constants.Commands.PASS or
@@ -26,4 +27,6 @@ def create_password(message: Message):
                                                         button_title=BotButtonTitles.Passwords.CHECK))
 def passwords_choise(message: Message):
     chat_id, text, message_id = get_info_from_message(message=message)
-    print('check')
+    send_message(chat_id=chat_id,
+                 title_message=BotMessageTitles.GET_PASS_TITLES,
+                 reply_markup=markup.password_titles(chat_id=chat_id))
