@@ -5,7 +5,8 @@ from time import sleep
 
 class Constants:
     try:
-        TOKEN = environ['tg_token']
+        # TOKEN = environ['tg_token']
+        TOKEN = '1899233767:AAEiula7YQPIgOvI5LT0u71Z7sKbrISW4sU'
     except KeyError:
         logger.error('No token in environment variables')
         sleep(1)

@@ -2,7 +2,9 @@ class Constants:
     DATABASE_INPUT_DATA = {'user': 'root',
                            'password': 'root',
                            'database': 'bot_different_utilities',
-                           'charset': 'utf8mb4'}
+                           'charset': 'utf8mb4',
+                           'host': 'db',
+                           }
 
     MAX_PASS_LEN = 501
     MIN_PASS_LEN = 8

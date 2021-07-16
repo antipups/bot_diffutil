@@ -153,3 +153,7 @@ def delay_delete(chat_id: int, message_id: int, delay: int = 10):
 def start_bot():
     logger.success(Logs.Success.BOT_WAS_STARTED)
     bot.polling()
+
+
+if __name__ == '__main__':
+    start_bot()
