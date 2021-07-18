@@ -17,7 +17,6 @@ services:
       - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
     environment:
       MYSQL_ROOT_PASSWORD: root
-#      MYSQL_DATABASE: bot_different_utilities
 
   adminer:
     image: adminer

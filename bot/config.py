@@ -5,8 +5,7 @@ from time import sleep
 
 class Constants:
     try:
-        # TOKEN = environ['tg_token']
-        TOKEN = '1899233767:AAEiula7YQPIgOvI5LT0u71Z7sKbrISW4sU'
+        TOKEN = environ['TG_TOKEN']
     except KeyError:
         logger.error('No token in environment variables')
         sleep(1)
@@ -110,7 +109,7 @@ class Keyboards:
 
     class Passwords:
         LENS = [[16, 32, 64],
-                [128, 256, 500]]
+                [128, 176, 200]]
         CYR = [[BotButtonTitles.Passwords.GeneratePassword.USE_CYR, BotButtonTitles.Passwords.GeneratePassword.NO_CYR ]]
         SPEC = [[BotButtonTitles.Passwords.GeneratePassword.USE_SPEC, BotButtonTitles.Passwords.GeneratePassword.NO_SPEC ]]
         SAVE = [[BotButtonTitles.Passwords.GeneratePassword.SAVE, BotButtonTitles.Passwords.GeneratePassword.NOT_SAVE ]]
