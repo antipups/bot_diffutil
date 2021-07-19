@@ -3,7 +3,10 @@ class Constants:
                            'password': 'root',
                            'database': 'bot_different_utilities',
                            'charset': 'utf8mb4',
-                           'host': 'db',
+                           # 'host': 'db',
+                           'host': 'localhost',
+                           # 'max_connections': None,
+                           'stale_timeout': 300
                            }
 
     MAX_PASS_LEN = 501

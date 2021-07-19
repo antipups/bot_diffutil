@@ -1,9 +1,10 @@
 import json
+import playhouse.pool
 from peewee import *
 from database.config import *
 
 
-db = MySQLDatabase(**Constants.DATABASE_INPUT_DATA)
+db = playhouse.pool.PooledMySQLDatabase(**Constants.DATABASE_INPUT_DATA)
 
 
 class BaseModel(Model):

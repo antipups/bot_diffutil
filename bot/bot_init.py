@@ -151,6 +151,7 @@ def delay_delete(chat_id: int, message_id: int, delay: int = 10):
 
 
 def start_bot():
+    bot.delete_webhook()
     logger.success(Logs.Success.BOT_WAS_STARTED)
     bot.polling()
 
