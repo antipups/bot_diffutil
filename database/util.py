@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Optional, Union
 
 import passwords.generate_password
@@ -5,6 +6,24 @@ from database.models import *
 from database.config import Logs, UserSessionKeys
 from logs import logger
 from passwords import rsa_manipulations
+
+
+def pool_connection():
+    """
+        For doesn't drop connection with db
+    :return:
+    """
+    while True:
+
+        try:
+            Languages.select(Languages.title)
+            sleep(Constants.POOLING_TIMEOUT)
+
+        except Exception as e:
+            logger.error(Logs.Error.POOLING.format(e))
+
+        else:
+            logger.success(Logs.Success.POOLING)
 
 
 def get_languages() -> tuple:
